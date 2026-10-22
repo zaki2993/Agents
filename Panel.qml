@@ -433,7 +433,22 @@ Panel {
     anchors.fill: parent
     bar: root.bar
     text: "󱚣"
+    iconComponent: agentIconComp
     active: root.alarming
+
+    Component {
+      id: agentIconComp
+      AgentIcon {
+        used: root.headline ? root.headline.percent : -1
+        alarming: root.alarming
+        color: button.foreground
+        alarmColor: root.urgent
+        fontFamily: button.fontFamily
+      }
+    }
+    tooltipText: root.provider && root.headline
+      ? root.provider.providerName + " · " + Math.round(root.headline.percent * 100) + "% of " + root.headline.title
+      : ""
     onPressed: function(buttonCode) {
       if (buttonCode === Qt.RightButton) root.launchAgent()
       else if (buttonCode === Qt.MiddleButton) root.selectProvider(root.providerIndex + 1)
