@@ -78,6 +78,31 @@ falls back to local stats only. A non-default Claude directory is honored via
 opencode stores in `~/.local/share/opencode/auth.json` when Fireworks is
 signed in there.
 
+### Subscription end date
+
+The hero line shows when the paid plan ends, e.g. `Plus · paid until Nov 5 (12d)`.
+A record may carry `subscriptionEndsAt` (ISO date), `subscriptionRenews`
+(`true` → "renews", `false` → "ends", missing → "paid until") and
+`subscriptionEstimated` (shows `~`).
+
+| Agent | Where the date comes from |
+|---|---|
+| `claude` | Estimated: next monthly anniversary of `subscription_created_at` from the OAuth profile endpoint (`~/.local/bin/omarchy-agent-usage-claude-patched` wraps the system collector) |
+| `codex` | `chatgpt_subscription_active_until` in the id_token in `~/.codex/auth.json` |
+| `command-code` | `currentPeriodEnd` from Command Code's billing API |
+| `antigravity` | Not reported anywhere; set it yourself (below) |
+
+Set a date by hand for any agent; it wins over the collector's:
+
+```bash
+omarchy bar set omarchy.agents providers '{
+  "antigravity": { "enabled": true, "subscriptionEndsAt": "2026-11-20" }
+}' --json
+```
+
+As with `enabled`, pass the whole `providers` object, or the other agents'
+settings are replaced.
+
 ### Fireworks balance
 
 The collector first asks the account's `:getBalance` endpoint for the real

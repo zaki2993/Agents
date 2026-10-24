@@ -214,6 +214,20 @@ Item {
     return settings.providers[id].enabled !== false
   }
 
+  // When the paid plan ends. A date set in settings (for agents that don't
+  // report one, like Antigravity) wins over what the collector found.
+  function subscriptionValue(record) {
+    var own = settings && settings.providers && settings.providers[record.id]
+      ? settings.providers[record.id].subscriptionEndsAt : ""
+    if (own) return { endsAt: String(own), renews: null, estimated: false }
+    if (!record.subscriptionEndsAt) return null
+    return {
+      endsAt: String(record.subscriptionEndsAt),
+      renews: typeof record.subscriptionRenews === "boolean" ? record.subscriptionRenews : null,
+      estimated: record.subscriptionEstimated === true
+    }
+  }
+
   // All-time keeps a quiet day from hiding an agent; today's counts admit a
   // machine whose only source is history.jsonl, which knows nothing older.
   function providerHasData(p) {
@@ -256,6 +270,7 @@ Item {
       limits: Array.isArray(record.limits) ? record.limits : [],
       tierLabel: String(record.tierLabel || ""),
       balance: balanceValue(record.balance),
+      subscription: subscriptionValue(record),
       // What recentDays counts. Agents with no readable token ledger
       // (Antigravity) chart prompts instead.
       dayUnit: String(record.dayUnit || "tokens"),

@@ -214,8 +214,23 @@ Panel {
     if (!p) return ""
     if (String(p.usageStatusText || "") !== "") return p.usageStatusText
     var tier = String(p.tierLabel || "")
-    if (tier === "") return "Subscription"
-    return tier.charAt(0).toUpperCase() + tier.slice(1)
+    tier = tier === "" ? "Subscription" : tier.charAt(0).toUpperCase() + tier.slice(1)
+    var ends = subscriptionText(p.subscription)
+    return ends === "" ? tier : tier + " · " + ends
+  }
+
+  // "ends Nov 5 (12d)": "renews" when it will auto-renew, "paid until" when
+  // that is unknown, "~" when the date is an estimate.
+  function subscriptionText(s) {
+    if (!s) return ""
+    // a bare date from settings ("2026-11-20") is read as local midnight
+    var date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(s.endsAt) ? s.endsAt + "T00:00:00" : s.endsAt)
+    if (isNaN(date.getTime())) return ""
+    var verb = s.renews === true ? "renews" : s.renews === false ? "ends" : "paid until"
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    var text = verb + " " + (s.estimated ? "~" : "") + months[date.getMonth()] + " " + date.getDate()
+    var days = Math.ceil((date.getTime() - root.nowMs) / (24 * 3600 * 1000))
+    return text + (days > 0 ? " (" + days + "d)" : " (ended)")
   }
 
   // Local calendar date, recomputed from nowMs so a panel left open across
