@@ -118,6 +118,7 @@ Panel {
   // The ring has room for one short word.
   function ringCaption(w) {
     if (!w) return "left"
+    if (w.spanMs >= 28 * 24 * 3600 * 1000) return "monthly"
     if (w.spanMs >= 7 * 24 * 3600 * 1000) return "weekly"
     if (w.spanMs > 0) return w.spanMs <= 6 * 3600 * 1000 ? "5-hour" : "session"
     return w.title.toLowerCase()

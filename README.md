@@ -67,7 +67,7 @@ light surfaces — and the bar glyph stands in when there is none.
 | `codex` | The Codex app-server RPC | native Codex CLI session files (plus pi and opencode sessions) |
 | `antigravity` | `agy -p /usage`: five-hour and weekly windows for the Gemini pool and the Claude & GPT pool (cached ~90 s, reused while offline) | `~/.gemini/antigravity-cli/history.jsonl` (timestamps and conversation ids only) and both apps' `conversation_summaries.db`; charts prompts per day, not tokens |
 | `opencode` | None (opencode has no limits of its own) | `~/.local/share/opencode/opencode.db`: tokens per model across every provider, prompts and sessions |
-| `command-code` | None (no local limit data) | `~/.commandcode/projects/*/*.jsonl` session files: tokens per model, prompts and sessions |
+| `command-code` | Command Code's billing API (5-hour, weekly and monthly credits), signed in with `~/.commandcode/auth.json` | `~/.commandcode/projects/*/*.jsonl` session files: tokens per model, prompts and sessions |
 | `fireworks` | Estimated prepaid balance: configured funding minus rated account costs | Fireworks billing API, grouped by day and model for the last 30 days |
 
 Claude limits need a signed-in CLI; without credentials the panel says so and
